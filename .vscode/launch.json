@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+
+        {
+            "name": "easehub_app",
+            "cwd": "easehub_app",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "args": ["-d", "chrome","--web-port", "3000"]
+        },
+        {
+            "name": "easehub_app (profile mode)",
+            "cwd": "easehub_app",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "args": ["-d", "chrome","--web-port", "3000"]
+        },
+        {
+            "name": "easehub_app (release mode)",
+            "cwd": "easehub_app",
+            
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["-d", "chrome","--web-port", "3000"]
+        }
+    ]
+}
