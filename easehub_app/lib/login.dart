@@ -146,29 +146,35 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  style: TextStyle(color: Colors.black),
                 ),
-                style: TextStyle(color: Colors.black),
               ),
               SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.white,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  style: TextStyle(color: Colors.black),
+                  obscureText: true,
                 ),
-                style: TextStyle(color: Colors.black),
-                obscureText: true,
               ),
               SizedBox(height: 20),
               _isLoading
@@ -190,9 +196,12 @@ class _LoginScreenState extends State<LoginScreen>
                       child: Text('Login'),
                     ),
               if (_loginFailed)
-                Text(
-                  'Login failed. Please try again.',
-                  style: TextStyle(color: Colors.red),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Login failed. Please try again.',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
             ],
           ),
