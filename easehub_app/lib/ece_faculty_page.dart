@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 class EceFacultyPage extends StatelessWidget {
   final String name;
-  final String designation;
+  final String role;
+  final String branch;
 
   const EceFacultyPage(
-      {Key? key, required this.name, required this.designation})
+      {Key? key, required this.name, required this.role, required this.branch})
       : super(key: key);
 
   @override
@@ -23,7 +24,11 @@ class EceFacultyPage extends StatelessWidget {
               style: TextStyle(fontSize: 24),
             ),
             Text(
-              'Designation: $designation',
+              'Role: $role',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'Branch: $branch',
               style: TextStyle(fontSize: 18),
             ),
           ],
