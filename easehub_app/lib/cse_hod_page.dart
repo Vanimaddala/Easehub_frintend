@@ -4,7 +4,7 @@ import 'grant_outpass_permissions.dart'; // Import GrantOutpassPermissions widge
 import 'todays_permission_dashboard.dart'; // Import TodaysPermissionDashboard widget
 import 'analytics.dart'; // Import Analytics widget
 
-class CseHodPage extends StatelessWidget {
+class CseHodPage extends StatefulWidget {
   final String? name;
   final String? role;
   final String? branch;
