@@ -59,14 +59,10 @@ class _LoginScreenState extends State<LoginScreen>
           'Content-Type': 'application/json',
         },
       );
-
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         _token = jsonResponse['accessToken'];
-        final role = jsonResponse['role'] as String?;
-        final branch = jsonResponse['branch'] as String?;
-        final name = jsonResponse['name'] as String?;
-        _loginSuccess(name, role, branch);
+        _loginSuccess(jsonResponse);
         print('Login successful');
       } else if (response.statusCode == 403) {
         setState(() {
@@ -90,59 +86,71 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  void _loginSuccess(String? name, String? role, String? branch) {
+  void _loginSuccess(Map<String, dynamic> jsonResponse) {
+    final role = jsonResponse['role'] as String?;
+    final branch = jsonResponse['branch'] as String?;
+    final name = jsonResponse['name'] as String?;
+
     print('Name: $name, Role: $role, Branch: $branch');
-    if (role == 'security') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SecurityPage(name: name!),
-        ),
-      );
-    } else if (role == 'HOD' && branch == 'ECE') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EceHodPage(
-            name: name!,
-            role: role!,
-            branch: branch!,
+
+    if (_token != null) {
+      // Route based on role and branch
+      if (role == 'security') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SecurityPage(name: name!),
           ),
-        ),
-      );
-    } else if (role == 'HOD' && branch == 'CSE') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CseHodPage(
-            name: name,
-            role: role,
-            branch: branch,
+        );
+      } else if (role == 'HOD' && branch == 'ECE') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EceHodPage(
+              name: name!,
+              role: role!,
+              branch: branch!,
+            ),
           ),
-        ),
-      );
-    } else if (role != 'HOD' && role != 'SECURITY' && branch == 'CSE') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CseFacultyPage(
-            name: name!,
-            role: role!,
-            branch: branch!,
+        );
+      } else if (role == 'HOD' && branch == 'CSE') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CseHodPage(
+              name: name,
+              role: role,
+              branch: branch,
+              token: _token,
+            ),
           ),
-        ),
-      );
-    } else if (role != 'HOD' && role != 'SECURITY' && branch == 'ECE') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EceFacultyPage(
-            name: name!,
-            role: role!,
-            branch: branch!,
+        );
+      } else if (role != 'HOD' && role != 'SECURITY' && branch == 'CSE') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CseFacultyPage(
+              name: name!,
+              role: role!,
+              branch: branch!,
+            ),
           ),
-        ),
-      );
+        );
+      } else if (role != 'HOD' && role != 'SECURITY' && branch == 'ECE') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EceFacultyPage(
+              name: name!,
+              role: role!,
+              branch: branch!,
+            ),
+          ),
+        );
+      }
+    } else {
+      // Handle the case when token is null
+      print('Token not found');
     }
   }
 

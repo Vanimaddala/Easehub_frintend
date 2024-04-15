@@ -11,6 +11,7 @@ class _GrantEventPermissionsState extends State<GrantEventPermissions> {
   TextEditingController searchController = TextEditingController();
   TextEditingController eventNameController = TextEditingController();
   TextEditingController eventEndDateController = TextEditingController();
+  DateTime? selectedEndDate;
 
   @override
   Widget build(BuildContext context) {
@@ -69,16 +70,48 @@ class _GrantEventPermissionsState extends State<GrantEventPermissions> {
             ),
             SizedBox(height: 10),
             TextField(
+              readOnly: true,
               controller: eventEndDateController,
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                );
+                if (picked != null && picked != selectedEndDate) {
+                  setState(() {
+                    selectedEndDate = picked;
+                    eventEndDateController.text =
+                        picked.toLocal().toString().split(' ')[0];
+                  });
+                }
+              },
               decoration: InputDecoration(
                 labelText: 'Event End Date',
                 border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today),
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                if (eventNameController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Please enter the event name.'),
+                  ));
+                  return;
+                }
+                if (selectedEndDate == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Please select the event end date.'),
+                  ));
+                  return;
+                }
                 // Implement grant permission functionality
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Permissions granted!'),
+                ));
               },
               child: Text(
                 'Grant Permission',

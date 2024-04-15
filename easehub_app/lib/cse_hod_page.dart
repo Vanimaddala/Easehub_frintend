@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
-import 'grant_event_permissions.dart'; // Import GrantEventPermissions widget
-import 'grant_outpass_permissions.dart'; // Import GrantOutpassPermissions widget
-import 'todays_permission_dashboard.dart'; // Import TodaysPermissionDashboard widget
-import 'analytics.dart'; // Import Analytics widget
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'grant_event_permissions.dart';
+import 'grant_outpass_permissions.dart';
+import 'todays_permission_dashboard.dart';
+import 'analytics.dart';
+import 'login.dart';
+import 'outpass_permission_list.dart';
 
 class CseHodPage extends StatefulWidget {
   final String? name;
   final String? role;
   final String? branch;
+  final String? token; // Add token variable
 
-  const CseHodPage({Key? key, this.name, this.role, this.branch})
+  const CseHodPage({Key? key, this.name, this.role, this.branch, this.token})
       : super(key: key);
+
+  @override
+  _CseHodPageState createState() => _CseHodPageState();
+}
+
+class _CseHodPageState extends State<CseHodPage> {
+  int _selectedIndex = 0;
+  PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('CSE HOD'),
+        backgroundColor: Colors.blue[900],
       ),
       drawer: Drawer(
         child: ListView(
@@ -24,10 +39,11 @@ class CseHodPage extends StatefulWidget {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.blue[900],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     'Department of Computer Science and Engineering',
@@ -44,89 +60,94 @@ class CseHodPage extends StatefulWidget {
                       fontSize: 16,
                     ),
                   ),
+                  SizedBox(height: 10),
+                  Text(
+                    'HOD: ${widget.name}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
                 ],
               ),
             ),
             ListTile(
-              title: Text('Name: $name'),
-              subtitle: Text('Role: $role\nBranch: $branch'),
+              title: Text('Role: ${widget.role}'),
+              subtitle: Text('Branch: ${widget.branch}'),
+              leading: CircleAvatar(
+                backgroundImage: AssetImage('assets/hod_image.jpg'),
+              ),
+            ),
+            // Logout option
+            ListTile(
+              title: Text('Logout'),
+              leading: Icon(Icons.logout),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome, $name!',
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Role: $role',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Branch: $branch',
-              style: TextStyle(fontSize: 18),
-            ),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GrantEventPermissions()),
-                    );
-                  },
-                  icon: Icon(Icons.event),
-                  iconSize: 40,
-                  color: Colors.blue,
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GrantOutpassPermissions()),
-                    );
-                  },
-                  icon: Icon(Icons.card_membership),
-                  iconSize: 40,
-                  color: Colors.blue,
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TodaysPermissionDashboard()),
-                    );
-                  },
-                  icon: Icon(Icons.dashboard),
-                  iconSize: 40,
-                  color: Colors.blue,
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Analytics()),
-                    );
-                  },
-                  icon: Icon(Icons.analytics),
-                  iconSize: 40,
-                  color: Colors.blue,
-                ),
-              ],
-            ),
-          ],
-        ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: <Widget>[
+          GrantEventPermissions(),
+          GrantOutpassPermissions(
+              hodDepartment: widget.branch,
+              token: widget.token!), // Pass token here
+          TodaysPermissionDashboard(),
+          Analytics(),
+          OutpassPermissionListPage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: 'Event Permissions',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.card_membership),
+            label: 'Outpass Permissions',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.analytics),
+            label: 'Analytics',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Outpass List',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue[900],
+        unselectedItemColor: Colors.black,
+        onTap: (index) {
+          if (index == 4) {
+            _pageController.jumpToPage(index);
+          } else {
+            _pageController.animateToPage(
+              index,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
+          }
+        },
       ),
     );
   }
